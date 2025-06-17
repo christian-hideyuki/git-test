@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Chosen Palette: Warm Neutrals with Clinical Blue and Muted Red accents -->
     <!-- Application Structure Plan: A single-page dashboard structure was chosen to facilitate direct comparison between blunt and penetrating injuries. It uses interactive navigation buttons to filter the displayed data across different categories (Patient Profile, Surgical Management, Complications, Outcomes). This is followed by sections explaining the 'why' behind the data and summarizing the conclusions. This structure enhances user engagement and understanding by allowing non-linear exploration of the study's findings. -->
-    <!-- Visualization & Content Choices: The application uses a mix of large Key Performance Indicator (KPI) cards for immediate impact on key statistics (e.g., time to OR, hospital stay). Bar charts are used for direct comparison of rates and values (e.g., complication rates, costs). A doughnut chart shows the distribution of injury severity. Interaction is centered around the filter buttons, which dynamically change the visible data. This was chosen for clarity, direct comparison, and to make a data-heavy report digestible and engaging. All charts are rendered via Chart.js on Canvas. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-     <!-- teste teste -->
+    <!-- Visualization & Content Choices: The application uses a mix of large Key Performance Indicator (KPI) cards for immediate impact on key statistics (e.g., time to OR, hospital stay). Bar charts are used for direct comparison of rates and values (e.g., complication rates, costs). A doughnut chart shows the distribution of injury severity. Interaction is centered around the filter buttons, which dynamically change the visible data. All charts are rendered via Chart.js on Canvas. -->
     <title>Análise Interativa de Trauma Intestinal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -47,6 +45,41 @@
                 height: 400px;
             }
         }
+        /* Custom styles for the injury classification table */
+        .injury-classification-table {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            overflow: hidden; /* Ensures rounded corners apply to content */
+        }
+        .injury-classification-table th {
+            background-color: #f0f8ff; /* Light blue background for header */
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 700; /* Bold */
+            color: #1e3a8a; /* Dark blue text */
+            border-bottom: 2px solid #e0e7ff; /* Lighter blue border */
+        }
+        .injury-classification-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb; /* Light gray border */
+            color: #4b5563; /* Darker gray text */
+        }
+        .injury-classification-table tbody tr:last-child td {
+            border-bottom: none; /* No border for the last row */
+        }
+        .injury-classification-table tbody tr:nth-child(odd) {
+            background-color: #f9fafb; /* Slightly darker background for odd rows */
+        }
+        .table-note {
+            background-color: #fffbeb; /* Light yellow background */
+            border-left: 4px solid #f59e0b; /* Orange border on left */
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0.5rem;
+            color: #78350f; /* Dark brown text */
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -57,7 +90,7 @@
 
         <header class="text-center mb-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Trauma Abdominal de Vísceras Maciças</h2>
-            <img src="capa.png" alt="Capa do artigo de Trauma Abdominal" class="rounded-lg shadow-md border-2 border-gray-200 mb-2 ">
+            <img src="capa.png" alt="Capa do artigo de Trauma Abdominal" class="rounded-lg shadow-md border-2 border-gray-200 mb-2">
             <p class="text-lg font-semibold text-gray-700 mb-8">Camila Vieira R1CG</p>
 
 
@@ -70,18 +103,23 @@
         <section id="methodology" class="bg-blue-50 p-6 rounded-lg shadow-inner mb-12">
             <h2 class="text-2xl font-bold text-blue-800 mb-4 text-center">Metodologia e Amostragem do Estudo</h2>
             <div class="max-w-4xl mx-auto text-gray-700 leading-relaxed">
-                <p class="mb-4">Este estudo baseia-se em uma **análise retrospectiva** de internações por trauma realizadas entre **janeiro de 2009 e junho de 2011** em um centro de trauma de Nível II. Os dados foram extraídos de um registro de trauma prospectivamente mantido.</p>
-                <p class="mb-4">Durante o período de estudo, o centro registrou um total de **4832 internações por trauma**. Deste total:</p>
                 <ul class="list-disc list-inside space-y-2 mb-4 pl-4">
-                    <li>**3866 internações foram por trauma contuso.**</li>
-                    <li>**966 internações foram por trauma penetrante.**</li>
+                    <li>Estudo de análise retrospectiva de internações por trauma.</li>
+                    <li>Período de estudo: janeiro de 2009 e junho de 2011.</li>
+                    <li>Local: Centro de trauma de Nível II.</li>
+                    <li>Dados extraídos de um registro de trauma prospectivamente mantido.</li>
+                    <li>Total de 4832 internações por trauma registradas.</li>
+                    <ul class="list-circle list-inside ml-8 space-y-1">
+                        <li>3866 internações por trauma contuso</li>
+                        <li>966 internações por trauma penetrante</li>
+                    </ul>
+                    <li>Grupo de estudo final: 131 pacientes que necessitaram de intervenção cirúrgica para lesões intestinais (estômago, intestino delgado e intestino grosso).</li>
+                    <ul class="list-circle list-inside ml-8 space-y-1">
+                        <li>54 pacientes com lesões intestinais contusas</li>
+                        <li>77 pacientes com lesões intestinais penetrantes</li>
+                    </ul>
+                    <li>Revisão de registros de internação e ambulatoriais para coletar dados: demográficos, gravidade da lesão, sinais vitais na emergência, tipo e grau da lesão, tempo para cirurgia, perda sanguínea, transfusões, manejo cirúrgico, complicações, tempo de internação e mortalidade</li>
                 </ul>
-                <p class="mb-4">Para a análise aprofundada, o grupo de estudo final foi composto por **131 pacientes** que necessitaram de intervenção cirúrgica especificamente para **lesões intestinais** (estômago, intestino delgado e intestino grosso). Esta amostragem foi dividida da seguinte forma:</p>
-                <ul class="list-disc list-inside space-y-2 pl-4">
-                    <li>**54 pacientes com lesões intestinais contusas.**</li>
-                    <li>**77 pacientes com lesões intestinais penetrantes.**</li>
-                </ul>
-                <p class="mt-4">Todos os registros de internação e ambulatoriais desses pacientes foram revisados para coletar dados demográficos, gravidade da lesão, sinais vitais na emergência, tipo e grau da lesão, tempo para cirurgia, perda sanguínea, transfusões, manejo cirúrgico, complicações, tempo de internação e mortalidade.</p>
             </div>
         </section>
 
@@ -102,6 +140,70 @@
                             <h3 class="text-2xl font-bold text-gray-900">Perfil e Gravidade da Lesão</h3>
                             <p class="text-gray-600 mt-1">Comparativo inicial dos pacientes e da severidade de suas lesões ao chegarem ao centro de trauma.</p>
                         </div>
+
+                        <!-- Tabela de Classificação de Lesões Abdominais inserida aqui -->
+                        <div class="injury-classification-table w-full mb-8">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Grau</th>
+                                        <th scope="col">Tipo de Lesão</th>
+                                        <th scope="col">Descrição da Lesão</th>
+                                        <th scope="col">AIS-90</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>I</td>
+                                        <td>Hematoma</td>
+                                        <td>Contusão ou hematoma sem desvascularização</td>
+                                        <td>2</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Laceração</td>
+                                        <td>Espessura parcial, sem perfuração</td>
+                                        <td>2</td>
+                                    </tr>
+                                    <tr>
+                                        <td>II</td>
+                                        <td>Laceração</td>
+                                        <td>Laceração &lt; 50% da circunferência</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>III</td>
+                                        <td>Laceração</td>
+                                        <td>Laceração ≥ 50% da circunferência sem transecção</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>IV</td>
+                                        <td>Laceração</td>
+                                        <td>Transecção do intestino delgado</td>
+                                        <td>4</td>
+                                    </tr>
+                                    <tr>
+                                        <td>V</td>
+                                        <td>Laceração</td>
+                                        <td>Transecção do intestino delgado com perda segmentar de tecido</td>
+                                        <td>4</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>Vascular</td>
+                                        <td>Segmento desvascularizado</td>
+                                        <td>4</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-note">
+                            <p><strong>Nota:</strong> Elevação de um grau para múltiplas lesões, até o grau III.</p>
+                            <p><strong>AIS-90:</strong> Escala Abreviada de Lesão.</p>
+                        </div>
+
+
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                              <div class="kpi-card">
                                 <h4 class="font-semibold text-gray-500 mb-2">Idade Média</h4>
@@ -143,8 +245,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="chart-container mx-auto max-w-3xl">
-                            <canvas id="injuryGradeChart"></canvas>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="chart-container mx-auto max-w-3xl">
+                                <canvas id="injuryGradeChart"></canvas>
+                            </div>
+                            <div class="chart-container mx-auto max-w-3xl">
+                                <canvas id="injuryLocationChart"></canvas>
+                            </div>
                         </div>
                     </div>
 
@@ -264,15 +371,15 @@
                      <ul class="space-y-4">
                          <li class="flex items-start">
                              <span class="text-blue-800 font-bold mr-3">✔</span>
-                             <p><strong class="font-semibold text-gray-900">Diferenciação Essencial:</strong> Lesões contusas são fundamentalmente diferentes, apresentando maior morbidade pós-operatória apesar de uma mortalidade semelhante.</p>
+                             <p>Lesões contusas são fundamentalmente diferentes, apresentando maior morbidade pós-operatória apesar de uma mortalidade semelhante.</p>
                          </li>
                          <li class="flex items-start">
                               <span class="text-blue-800 font-bold mr-3">✔</span>
-                             <p><strong class="font-semibold text-gray-900">Vigilância é a Chave:</strong> É imperativo manter um alto índice de suspeita para lesões intestinais em traumas contusos, especialmente com achados de imagem inconclusivos.</p>
+                             <p>É imperativo manter um alto índice de suspeita para lesões intestinais em traumas contusos, especialmente com achados de imagem inconclusivos.</p>
                          </li>
                           <li class="flex items-start">
                               <span class="text-blue-800 font-bold mr-3">✔</span>
-                             <p><strong class="font-semibold text-gray-900">Otimizar o Manejo:</strong> Focar em estratégias de diagnóstico precoce (ex: laparoscopia) e desenvolver algoritmos cirúrgicos específicos para trauma contuso são passos cruciais para reduzir complicações.</p>
+                             <p>Focar em estratégias de diagnóstico precoce (ex: laparoscopia) e desenvolver algoritmos cirúrgicos específicos para trauma contuso são passos cruciais para reduzir complicações.</p>
                          </li>
                      </ul>
                  </div>
@@ -281,7 +388,7 @@
 
 
         <footer class="text-center mt-16 pt-8 border-t">
-            <p class="text-sm text-gray-500">Visualização de dados baseada no artigo: Adam, N., Sorensen, V., & Skinner, R. (2015). Not all intestinal traumatic injuries are the same: A comparison of surgically treated blunt vs. penetrating injuries. *Injury, 46*, 115-118.</p>
+            <p class="text-sm text-gray-500">Visualização de dados baseada no artigo: Adam, N., Sorensen, V., & Skinner, R. (2015). Not all intestinal traumatic injuries are the same: A comparison of surgically treated blunt vs. penetrating injuries. *Injury, 46*, 115-118. Livro Mattox, Livro Top Knife. </p>
         </footer>
 
 
@@ -299,6 +406,11 @@
                     labels: ['Grau IV-V (Grave)', 'Grau I-III (Leve/Moderado)'],
                     blunt: [67, 24],
                     penetrating: [6, 92]
+                },
+                injuryLocation: {
+                    labels: ['Estômago', 'Intestino Delgado', 'Intestino Grosso'],
+                    blunt: [3, 77, 33], // Porcentagens aproximadas do texto do artigo
+                    penetrating: [32, 66, 57] // Porcentagens aproximadas do texto do artigo
                 },
                 management: {
                     labels: ['Abdome Aberto', 'Reparo Tardio'],
@@ -334,7 +446,6 @@
                     size: 12
                 },
                 formatter: (value) => value + '%',
-                // Adjust position for better visibility on bars/doughnut segments
                 anchor: 'center',
                 align: 'center',
             };
@@ -373,10 +484,10 @@
                             tooltip: { callbacks: { label: (context) => `${context.dataset.label}: ${context.raw}%` } },
                             datalabels: {
                                 ...datalabelsOptions,
-                                color: (context) => { // Dynamic color based on background
+                                color: (context) => {
                                     const datasetIndex = context.datasetIndex;
-                                    if (datasetIndex === 0) return 'white'; // Darker bar, white text
-                                    return 'black'; // Lighter bar, black text
+                                    if (datasetIndex === 0) return 'white';
+                                    return 'black';
                                 }
                             }
                         },
@@ -384,6 +495,46 @@
                     }
                 });
             }
+
+
+            function createInjuryLocationChart() {
+                const ctx = document.getElementById('injuryLocationChart').getContext('2d');
+                if (charts.injuryLocation) charts.injuryLocation.destroy();
+                charts.injuryLocation = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.injuryLocation.labels,
+                        datasets: [
+                            {
+                                label: 'Contuso',
+                                data: data.injuryLocation.blunt,
+                                backgroundColor: bluntColor,
+                                borderColor: bluntBorderColor,
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Penetrante',
+                                data: data.injuryLocation.penetrating,
+                                backgroundColor: penetratingColor,
+                                borderColor: penetratingBorderColor,
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: true, text: 'Classificação da Lesão por Localização (%)', font: { size: 16 } },
+                            tooltip: { callbacks: { label: (context) => `${context.dataset.label}: ${context.raw}%` } },
+                            datalabels: datalabelsOptions
+                        },
+                        scales: { y: { beginAtZero: true, max: 80 } }
+                    }
+                });
+            }
+
+
 
 
             function createManagementChart() {
@@ -486,14 +637,13 @@
                              tooltip: { callbacks: { label: (context) => `${context.label}: ${context.raw}%` } },
                              datalabels: {
                                 ...datalabelsOptions,
-                                color: (context) => { // Make labels visible on both colors
+                                color: (context) => {
                                     const backgroundColor = context.dataset.backgroundColor[context.dataIndex];
-                                    // A simple heuristic for dark/light background
                                     const r = parseInt(backgroundColor.substring(backgroundColor.indexOf('(') + 1, backgroundColor.indexOf(',')));
                                     const g = parseInt(backgroundColor.substring(backgroundColor.indexOf(',') + 1, backgroundColor.lastIndexOf(',')));
                                     const b = parseInt(backgroundColor.substring(backgroundColor.lastIndexOf(',') + 1, backgroundColor.indexOf(')')));
                                     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-                                    return luminance > 0.5 ? 'black' : 'white'; // Use black for light backgrounds, white for dark
+                                    return luminance > 0.5 ? 'black' : 'white';
                                 }
                             }
                         }
@@ -525,7 +675,10 @@
 
 
                     // Trigger chart creation when its view becomes visible
-                    if(targetId === 'perfil') createInjuryGradeChart(); // Always create on tab switch to ensure labels are visible
+                    if(targetId === 'perfil') {
+                        createInjuryGradeChart();
+                        createInjuryLocationChart();
+                    }
                     if(targetId === 'manejo') createManagementChart();
                     if(targetId === 'complicacoes') createComplicationsChart();
                     if(targetId === 'desfechos') createMortalityChart();
@@ -534,6 +687,7 @@
            
             // Initial chart load
             createInjuryGradeChart();
+            createInjuryLocationChart();
         });
     </script>
 </body>
