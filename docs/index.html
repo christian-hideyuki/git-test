@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Chosen Palette: Warm Neutrals with Clinical Blue and Muted Red accents -->
-    <!-- Application Structure Plan: A single-page dashboard structure was chosen to facilitate direct comparison between blunt and penetrating injuries. It uses interactive navigation buttons to filter the displayed data across different categories (Patient Profile, Surgical Management, Complications, Outcomes). This is followed by sections explaining the 'why' behind the data and summarizing the conclusions. This structure enhances user engagement and understanding by allowing non-linear exploration of the study's findings. -->
-    <!-- Visualization & Content Choices: The application uses a mix of large Key Performance Indicator (KPI) cards for immediate impact on key statistics (e.g., time to OR, hospital stay). Bar charts are used for direct comparison of rates and values (e.g., complication rates, costs). A doughnut chart shows the distribution of injury severity. Interaction is centered around the filter buttons, which dynamically change the visible data. All charts are rendered via Chart.js on Canvas. -->
     <title>Análise Interativa de Trauma Intestinal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -45,25 +42,25 @@
                 height: 400px;
             }
         }
-        /* Custom styles for the injury classification table */
+
         .injury-classification-table {
             background-color: white;
             border-radius: 0.75rem;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            overflow: hidden; /* Ensures rounded corners apply to content */
+            overflow: hidden;
         }
         .injury-classification-table th {
-            background-color: #f0f8ff; /* Light blue background for header */
+            background-color: #f0f8ff; 
             padding: 1rem 1.5rem;
             text-align: left;
-            font-weight: 700; /* Bold */
-            color: #1e3a8a; /* Dark blue text */
-            border-bottom: 2px solid #e0e7ff; /* Lighter blue border */
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid #e0e7ff;
         }
         .injury-classification-table td {
             padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e5e7eb; /* Light gray border */
-            color: #4b5563; /* Darker gray text */
+            border-bottom: 1px solid #e5e7eb; 
+            color: #4b5563;
         }
         .injury-classification-table tbody tr:last-child td {
             border-bottom: none; /* No border for the last row */
