@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chosen Palette: Warm Neutrals with Clinical Blue and Muted Red accents -->
+    <!-- Application Structure Plan: A single-page dashboard structure was chosen to facilitate direct comparison between blunt and penetrating injuries. It uses interactive navigation buttons to filter the displayed data across different categories (Patient Profile, Surgical Management, Complications, Outcomes). This is followed by sections explaining the 'why' behind the data and summarizing the conclusions. This structure enhances user engagement and understanding by allowing non-linear exploration of the study's findings. -->
+    <!-- Visualization & Content Choices: The application uses a mix of large Key Performance Indicator (KPI) cards for immediate impact on key statistics (e.g., time to OR, hospital stay). Bar charts are used for direct comparison of rates and values (e.g., complication rates, costs). A doughnut chart shows the distribution of injury severity. Interaction is centered around the filter buttons, which dynamically change the visible data. This was chosen for clarity, direct comparison, and to make a data-heavy report digestible and engaging. All charts are rendered via Chart.js on Canvas. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <title>Análise Interativa de Trauma Intestinal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .nav-btn {
+            transition: all 0.3s ease;
+        }
+        .nav-btn.active {
+            background-color: #1e3a8a;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .kpi-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            text-align: center;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+
+    <div class="container mx-auto p-4 md:p-8">
+
+
+        <header class="text-center mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Trauma Abdominal de Vísceras Maciças</h2>
+            <img src="capa.png" alt="Capa do artigo de Trauma Abdominal" class="rounded-lg shadow-md border-2 border-gray-200 mb-2 ">
+            <p class="text-lg font-semibold text-gray-700 mb-8">Camila Vieira R1CG</p>
+
+
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2">Trauma Intestinal: Contuso vs. Penetrante</h1>
+            <p class="text-xl text-blue-800 font-semibold">Uma Análise Interativa dos Desfechos Cirúrgicos</p>
+            <p class="mt-4 max-w-3xl mx-auto text-gray-600">Baseado no estudo de Adam et al., este painel explora as diferenças críticas entre lesões intestinais causadas por trauma contuso e penetrante, revelando por que as lesões contusas, embora menos comuns, frequentemente resultam em maior morbidade.</p>
+        </header>
+
+
+        <section id="methodology" class="bg-blue-50 p-6 rounded-lg shadow-inner mb-12">
+            <h2 class="text-2xl font-bold text-blue-800 mb-4 text-center">Metodologia e Amostragem do Estudo</h2>
+            <div class="max-w-4xl mx-auto text-gray-700 leading-relaxed">
+                <p class="mb-4">Este estudo baseia-se em uma **análise retrospectiva** de internações por trauma realizadas entre **janeiro de 2009 e junho de 2011** em um centro de trauma de Nível II. Os dados foram extraídos de um registro de trauma prospectivamente mantido.</p>
+                <p class="mb-4">Durante o período de estudo, o centro registrou um total de **4832 internações por trauma**. Deste total:</p>
+                <ul class="list-disc list-inside space-y-2 mb-4 pl-4">
+                    <li>**3866 internações foram por trauma contuso.**</li>
+                    <li>**966 internações foram por trauma penetrante.**</li>
+                </ul>
+                <p class="mb-4">Para a análise aprofundada, o grupo de estudo final foi composto por **131 pacientes** que necessitaram de intervenção cirúrgica especificamente para **lesões intestinais** (estômago, intestino delgado e intestino grosso). Esta amostragem foi dividida da seguinte forma:</p>
+                <ul class="list-disc list-inside space-y-2 pl-4">
+                    <li>**54 pacientes com lesões intestinais contusas.**</li>
+                    <li>**77 pacientes com lesões intestinais penetrantes.**</li>
+                </ul>
+                <p class="mt-4">Todos os registros de internação e ambulatoriais desses pacientes foram revisados para coletar dados demográficos, gravidade da lesão, sinais vitais na emergência, tipo e grau da lesão, tempo para cirurgia, perda sanguínea, transfusões, manejo cirúrgico, complicações, tempo de internação e mortalidade.</p>
+            </div>
+        </section>
+
+
+        <main>
+            <section id="dashboard" class="bg-gray-100 p-4 sm:p-6 md:p-8 rounded-2xl shadow-inner">
+                <nav class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">
+                    <button data-target="perfil" class="nav-btn active text-sm md:text-base font-semibold py-2 px-4 rounded-full bg-white text-gray-700 shadow-sm hover:bg-blue-100">Perfil do Paciente</button>
+                    <button data-target="manejo" class="nav-btn text-sm md:text-base font-semibold py-2 px-4 rounded-full bg-white text-gray-700 shadow-sm hover:bg-blue-100">Manejo Cirúrgico</button>
+                    <button data-target="complicacoes" class="nav-btn text-sm md:text-base font-semibold py-2 px-4 rounded-full bg-white text-gray-700 shadow-sm hover:bg-blue-100">Complicações</button>
+                    <button data-target="desfechos" class="nav-btn text-sm md:text-base font-semibold py-2 px-4 rounded-full bg-white text-gray-700 shadow-sm hover:bg-blue-100">Desfechos e Custos</button>
+                </nav>
+
+
+                <div id="dashboard-content">
+                    <div id="perfil-content" class="content-view">
+                         <div class="text-center mb-8">
+                            <h3 class="text-2xl font-bold text-gray-900">Perfil e Gravidade da Lesão</h3>
+                            <p class="text-gray-600 mt-1">Comparativo inicial dos pacientes e da severidade de suas lesões ao chegarem ao centro de trauma.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                             <div class="kpi-card">
+                                <h4 class="font-semibold text-gray-500 mb-2">Idade Média</h4>
+                                <div class="flex justify-around items-end">
+                                    <div>
+                                        <p class="text-4xl font-bold text-red-600">34</p>
+                                        <p class="font-semibold text-red-500">Contuso</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-4xl font-bold text-blue-600">30</p>
+                                        <p class="font-semibold text-blue-500">Penetrante</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="kpi-card">
+                                <h4 class="font-semibold text-gray-500 mb-2">ISS Médio (Gravidade)</h4>
+                                <div class="flex justify-around items-end">
+                                    <div>
+                                        <p class="text-4xl font-bold text-red-600">20</p>
+                                        <p class="font-semibold text-red-500">Contuso</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-4xl font-bold text-blue-600">16</p>
+                                        <p class="font-semibold text-blue-500">Penetrante</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="kpi-card lg:col-span-1">
+                                <h4 class="font-semibold text-gray-500 mb-2">Choque na Entrada</h4>
+                                 <div class="flex justify-around items-end">
+                                    <div>
+                                        <p class="text-4xl font-bold text-red-600">25%</p>
+                                        <p class="font-semibold text-red-500">Contuso</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-4xl font-bold text-blue-600">11%</p>
+                                        <p class="font-semibold text-blue-500">Penetrante</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container mx-auto max-w-3xl">
+                            <canvas id="injuryGradeChart"></canvas>
+                        </div>
+                    </div>
+
+
+                    <div id="manejo-content" class="content-view hidden">
+                         <div class="text-center mb-8">
+                            <h3 class="text-2xl font-bold text-gray-900">Manejo Cirúrgico</h3>
+                            <p class="text-gray-600 mt-1">Diferenças na abordagem cirúrgica, refletindo a complexidade de cada tipo de trauma.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="kpi-card">
+                                <h4 class="font-semibold text-gray-500 mb-2">Tempo Médio até a Cirurgia</h4>
+                                <div class="flex justify-around items-center">
+                                    <div>
+                                        <p class="text-4xl font-bold text-red-600">8.33</p>
+                                        <p class="font-semibold text-red-500">horas (Contuso)</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-4xl font-bold text-blue-600">1.83</p>
+                                        <p class="font-semibold text-blue-500">horas (Penetrante)</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="chart-container">
+                                <canvas id="managementChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div id="complicacoes-content" class="content-view hidden">
+                         <div class="text-center mb-8">
+                            <h3 class="text-2xl font-bold text-gray-900">Complicações Pós-Operatórias</h3>
+                            <p class="text-gray-600 mt-1">As taxas de complicações revelam o verdadeiro fardo das lesões contusas.</p>
+                        </div>
+                        <div class="chart-container">
+                             <canvas id="complicationsChart"></canvas>
+                        </div>
+                    </div>
+
+
+                    <div id="desfechos-content" class="content-view hidden">
+                        <div class="text-center mb-8">
+                            <h3 class="text-2xl font-bold text-gray-900">Desfechos Finais e Custos</h3>
+                            <p class="text-gray-600 mt-1">Impacto na recuperação do paciente e nos recursos do sistema de saúde.</p>
+                        </div>
+                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                             <div class="kpi-card">
+                                <h4 class="font-semibold text-gray-500 mb-2">Tempo de Internação (Dias)</h4>
+                                <div class="flex justify-around items-end">
+                                    <div>
+                                        <p class="text-4xl font-bold text-red-600">20</p>
+                                        <p class="font-semibold text-red-500">Contuso</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-4xl font-bold text-blue-600">11</p>
+                                        <p class="font-semibold text-blue-500">Penetrante</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="kpi-card">
+                                <h4 class="font-semibold text-gray-500 mb-2">Tempo de UTI (Dias)</h4>
+                                <div class="flex justify-around items-end">
+                                    <div>
+                                        <p class="text-4xl font-bold text-red-600">10</p>
+                                        <p class="font-semibold text-red-500">Contuso</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-4xl font-bold text-blue-600">5</p>
+                                        <p class="font-semibold text-blue-500">Penetrante</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="kpi-card">
+                                <h4 class="font-semibold text-gray-500 mb-2">Custo Hospitalar Médio</h4>
+                                <div class="flex justify-around items-center">
+                                    <div>
+                                        <p class="text-3xl md:text-4xl font-bold text-red-600">$248k</p>
+                                        <p class="font-semibold text-red-500">Contuso</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-3xl md:text-4xl font-bold text-blue-600">$127k</p>
+                                        <p class="font-semibold text-blue-500">Penetrante</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container mx-auto max-w-xl">
+                             <canvas id="mortalityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="mt-16">
+                <h2 class="text-3xl font-bold text-center mb-8">O X da Questão: Por que as Lesões Contusas São Mais Complexas?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-3 text-red-700">Atraso no Diagnóstico</h3>
+                        <p class="text-gray-600">Lesões contusas são insidiosas. Sem uma ferida óbvia, o diagnóstico depende de exames de imagem (TC) que podem ser difíceis de interpretar, levando a um atraso crítico de quase 8 horas até a cirurgia.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-3 text-red-700">Gravidade Oculta da Lesão</h3>
+                        <p class="text-gray-600">As forças de cisalhamento e esmagamento no trauma contuso causam danos teciduais mais extensos e difusos (lesões de grau IV-V). Isso resulta em tecidos mais frágeis, piores condições para cicatrização e cirurgias mais complexas.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-3 text-red-700">Resposta Inflamatória</h3>
+                        <p class="text-gray-600">Traumas contusos, frequentemente associados a outras lesões graves (neurológicas, por exemplo), desencadeiam uma resposta inflamatória sistêmica mais intensa, que pode prejudicar a cicatrização de anastomoses e aumentar o risco de infecções.</p>
+                    </div>
+                </div>
+            </section>
+           
+            <section class="mt-16 text-center">
+                 <h2 class="text-3xl font-bold mb-8">Conclusões e Implicações Clínicas</h2>
+                 <div class="max-w-3xl mx-auto bg-blue-50 border-l-4 border-blue-800 p-6 rounded-r-lg text-left">
+                     <ul class="space-y-4">
+                         <li class="flex items-start">
+                             <span class="text-blue-800 font-bold mr-3">✔</span>
+                             <p><strong class="font-semibold text-gray-900">Diferenciação Essencial:</strong> Lesões contusas são fundamentalmente diferentes, apresentando maior morbidade pós-operatória apesar de uma mortalidade semelhante.</p>
+                         </li>
+                         <li class="flex items-start">
+                              <span class="text-blue-800 font-bold mr-3">✔</span>
+                             <p><strong class="font-semibold text-gray-900">Vigilância é a Chave:</strong> É imperativo manter um alto índice de suspeita para lesões intestinais em traumas contusos, especialmente com achados de imagem inconclusivos.</p>
+                         </li>
+                          <li class="flex items-start">
+                              <span class="text-blue-800 font-bold mr-3">✔</span>
+                             <p><strong class="font-semibold text-gray-900">Otimizar o Manejo:</strong> Focar em estratégias de diagnóstico precoce (ex: laparoscopia) e desenvolver algoritmos cirúrgicos específicos para trauma contuso são passos cruciais para reduzir complicações.</p>
+                         </li>
+                     </ul>
+                 </div>
+            </section>
+        </main>
+
+
+        <footer class="text-center mt-16 pt-8 border-t">
+            <p class="text-sm text-gray-500">Visualização de dados baseada no artigo: Adam, N., Sorensen, V., & Skinner, R. (2015). Not all intestinal traumatic injuries are the same: A comparison of surgically treated blunt vs. penetrating injuries. *Injury, 46*, 115-118.</p>
+        </footer>
+
+
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Register the datalabels plugin globally
+            Chart.register(ChartDataLabels);
+
+
+            const data = {
+                injuryGrade: {
+                    labels: ['Grau IV-V (Grave)', 'Grau I-III (Leve/Moderado)'],
+                    blunt: [67, 24],
+                    penetrating: [6, 92]
+                },
+                management: {
+                    labels: ['Abdome Aberto', 'Reparo Tardio'],
+                    blunt: [35, 30],
+                    penetrating: [6, 10]
+                },
+                complications: {
+                    labels: ['Fístulas Entéricas', 'Infecção de Sítio Cirúrgico (SSI)', 'Outras Infecções Nosocomiais', 'Vazamento Anastomótico'],
+                    blunt: [15, 20, 20, 7],
+                    penetrating: [3, 5, 3, 3]
+                },
+                mortality: {
+                    blunt: 5,
+                    penetrating: 7
+                }
+            };
+
+
+            const bluntColor = 'rgba(220, 38, 38, 0.8)';
+            const bluntBorderColor = 'rgba(220, 38, 38, 1)';
+            const penetratingColor = 'rgba(37, 99, 235, 0.8)';
+            const penetratingBorderColor = 'rgba(37, 99, 235, 1)';
+
+
+            let charts = {};
+
+
+            // Common datalabels plugin options
+            const datalabelsOptions = {
+                color: '#fff', // Default color for labels
+                font: {
+                    weight: 'bold',
+                    size: 12
+                },
+                formatter: (value) => value + '%',
+                // Adjust position for better visibility on bars/doughnut segments
+                anchor: 'center',
+                align: 'center',
+            };
+
+
+            function createInjuryGradeChart() {
+                const ctx = document.getElementById('injuryGradeChart').getContext('2d');
+                if (charts.injuryGrade) charts.injuryGrade.destroy();
+                charts.injuryGrade = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Trauma Contuso', 'Trauma Penetrante'],
+                        datasets: [
+                            {
+                                label: 'Grau IV-V (Grave)',
+                                data: [data.injuryGrade.blunt[0], data.injuryGrade.penetrating[0]],
+                                backgroundColor: 'rgba(192, 57, 43, 0.8)',
+                                borderColor: 'rgba(192, 57, 43, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Grau I-III (Leve/Moderado)',
+                                data: [data.injuryGrade.blunt[1], data.injuryGrade.penetrating[1]],
+                                backgroundColor: 'rgba(236, 240, 241, 0.8)',
+                                borderColor: 'rgba(189, 195, 199, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: true, text: 'Distribuição da Gravidade da Lesão (%)', font: { size: 16 } },
+                            tooltip: { callbacks: { label: (context) => `${context.dataset.label}: ${context.raw}%` } },
+                            datalabels: {
+                                ...datalabelsOptions,
+                                color: (context) => { // Dynamic color based on background
+                                    const datasetIndex = context.datasetIndex;
+                                    if (datasetIndex === 0) return 'white'; // Darker bar, white text
+                                    return 'black'; // Lighter bar, black text
+                                }
+                            }
+                        },
+                        scales: { x: { stacked: true, max: 100 }, y: { stacked: true } }
+                    }
+                });
+            }
+
+
+            function createManagementChart() {
+                const ctx = document.getElementById('managementChart').getContext('2d');
+                if (charts.management) charts.management.destroy();
+                charts.management = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.management.labels,
+                        datasets: [
+                            {
+                                label: 'Contuso',
+                                data: data.management.blunt,
+                                backgroundColor: bluntColor,
+                                borderColor: bluntBorderColor,
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Penetrante',
+                                data: data.management.penetrating,
+                                backgroundColor: penetratingColor,
+                                borderColor: penetratingBorderColor,
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: true, text: 'Abordagens Cirúrgicas de Exceção (%)', font: { size: 16 } },
+                            tooltip: { callbacks: { label: (context) => `${context.dataset.label}: ${context.raw}%` } },
+                            datalabels: datalabelsOptions
+                        },
+                        scales: { y: { beginAtZero: true, max: 40 } }
+                    }
+                });
+            }
+
+
+            function createComplicationsChart() {
+                const ctx = document.getElementById('complicationsChart').getContext('2d');
+                if (charts.complications) charts.complications.destroy();
+                charts.complications = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.complications.labels,
+                        datasets: [
+                            {
+                                label: 'Contuso',
+                                data: data.complications.blunt,
+                                backgroundColor: bluntColor,
+                                borderColor: bluntBorderColor,
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Penetrante',
+                                data: data.complications.penetrating,
+                                backgroundColor: penetratingColor,
+                                borderColor: penetratingBorderColor,
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: true, text: 'Taxa de Complicações (%)', font: { size: 16 } },
+                            tooltip: { callbacks: { label: (context) => `${context.dataset.label}: ${context.raw}%` } },
+                            datalabels: datalabelsOptions
+                        },
+                        scales: { y: { beginAtZero: true, max: 25 } }
+                    }
+                });
+            }
+
+
+            function createMortalityChart() {
+                const ctx = document.getElementById('mortalityChart').getContext('2d');
+                if (charts.mortality) charts.mortality.destroy();
+                charts.mortality = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Contuso', 'Penetrante'],
+                        datasets: [{
+                            label: 'Mortalidade',
+                            data: [data.mortality.blunt, data.mortality.penetrating],
+                            backgroundColor: [bluntColor, penetratingColor],
+                            borderColor: [bluntBorderColor, penetratingBorderColor],
+                            borderWidth: 1,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: true, text: 'Taxa de Mortalidade (%)', font: { size: 16 } },
+                             tooltip: { callbacks: { label: (context) => `${context.label}: ${context.raw}%` } },
+                             datalabels: {
+                                ...datalabelsOptions,
+                                color: (context) => { // Make labels visible on both colors
+                                    const backgroundColor = context.dataset.backgroundColor[context.dataIndex];
+                                    // A simple heuristic for dark/light background
+                                    const r = parseInt(backgroundColor.substring(backgroundColor.indexOf('(') + 1, backgroundColor.indexOf(',')));
+                                    const g = parseInt(backgroundColor.substring(backgroundColor.indexOf(',') + 1, backgroundColor.lastIndexOf(',')));
+                                    const b = parseInt(backgroundColor.substring(backgroundColor.lastIndexOf(',') + 1, backgroundColor.indexOf(')')));
+                                    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                                    return luminance > 0.5 ? 'black' : 'white'; // Use black for light backgrounds, white for dark
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const contentViews = document.querySelectorAll('.content-view');
+
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+
+
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+
+                    contentViews.forEach(view => {
+                        if (view.id === `${targetId}-content`) {
+                            view.classList.remove('hidden');
+                        } else {
+                            view.classList.add('hidden');
+                        }
+                    });
+
+
+                    // Trigger chart creation when its view becomes visible
+                    if(targetId === 'perfil') createInjuryGradeChart(); // Always create on tab switch to ensure labels are visible
+                    if(targetId === 'manejo') createManagementChart();
+                    if(targetId === 'complicacoes') createComplicationsChart();
+                    if(targetId === 'desfechos') createMortalityChart();
+                });
+            });
+           
+            // Initial chart load
+            createInjuryGradeChart();
+        });
+    </script>
+</body>
+</html>
